@@ -2,7 +2,7 @@
 ### *A Visual Reference for the Observability & RCA Platform Engineer*
 
 > **Running Example Throughout This Handbook:**
-> A user asks: *"Why has MarketID ABC stopped processing trades since 10:30?"*
+> A user asks: *"Why has ID  ABC stopped processing trades since 10:30?"*
 > Every concept is explained through this lens.
 
 ---
