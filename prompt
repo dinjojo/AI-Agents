@@ -1,0 +1,317 @@
+# Prompt
+
+I am **not** looking for implementation or code first.
+
+I want you to act like an experienced enterprise AI architect and technical educator.
+
+Your goal is to teach me the concepts behind modern AI agents in a way that is intuitive, visual, and easy to understand.
+
+Assume I already have experience in software architecture, observability, distributed systems, and enterprise applications, but I am new to AI agent architecture.
+
+## Context
+
+I am building an enterprise AI-powered Observability and Root Cause Analysis (RCA) platform.
+
+It will eventually integrate with:
+
+* Grafana
+* Loki
+* Prometheus
+* Kafka
+* MongoDB
+* Snowflake
+* Tempo
+* Other enterprise systems
+
+A typical user question would be:
+
+> "Why has MarketID ABC stopped processing trades since 10:30?"
+
+The AI agent should investigate multiple systems, correlate evidence, and generate a root cause analysis.
+
+Do not focus on LangGraph, Claude SDK, OpenAI SDK, or any framework until the underlying concepts are thoroughly explained.
+
+The objective is to understand **why** each concept exists before learning **how** it is implemented.
+
+---
+
+# Teaching Style
+
+Teach as if you are writing an O'Reilly technical book or an internal engineering handbook.
+
+Use **simple English**.
+
+Avoid unnecessary AI jargon.
+
+Every concept should build upon the previous one.
+
+Always relate the explanation back to my observability platform.
+
+Never explain concepts in isolation.
+
+---
+
+# Every chapter should contain
+
+## 1. Definition
+
+Explain what the concept is.
+
+---
+
+## 2. Why it exists
+
+What problem does it solve?
+
+What would happen if it didn't exist?
+
+---
+
+## 3. Real-world analogy
+
+Use everyday examples.
+
+Examples:
+
+* Airport
+* Hospital
+* Restaurant
+* Factory
+* Bank
+* Amazon warehouse
+* IT support engineer
+
+---
+
+## 4. Observability example
+
+Always use my running example.
+
+Example:
+
+Why has MarketID ABC stopped processing trades?
+
+Explain exactly where this concept is used.
+
+---
+
+## 5. Visual workflow
+
+Every concept must include multiple diagrams.
+
+Examples include:
+
+ASCII workflow
+
+```text
+User
+ │
+ ▼
+Intent
+ │
+ ▼
+Planner
+ │
+ ▼
+Tool
+ │
+ ▼
+Result
+```
+
+Decision tree
+
+```text
+              User Question
+                     │
+          ┌──────────┴──────────┐
+          ▼                     ▼
+     Logs Question        Metrics Question
+          │                     │
+          ▼                     ▼
+       Loki Tool         Prometheus Tool
+```
+
+Sequence diagram
+
+```text
+User
+ │
+ │ Ask Question
+ ▼
+Agent
+ │
+ │ Extract Intent
+ ▼
+Planner
+ │
+ │ Execute Tools
+ ▼
+MongoDB
+```
+
+Architecture diagram
+
+```text
+            User
+
+              │
+
+              ▼
+
+      Intent Extraction
+
+              │
+
+              ▼
+
+     Entity Extraction
+
+              │
+
+              ▼
+
+     Entity Resolution
+
+              │
+
+              ▼
+
+           Planner
+
+      ┌───────┼────────┐
+
+      ▼       ▼        ▼
+
+   Grafana  Loki   MongoDB
+```
+
+Flowchart
+
+Comparison table
+
+Mind map
+
+Decision matrix
+
+Layer diagram
+
+Component interaction diagram
+
+Swimlane diagram
+
+State transition diagram
+
+Use whichever visualization best explains the concept.
+
+Every chapter should contain at least **three visual diagrams**.
+
+---
+
+## 6. Step-by-step walkthrough
+
+Walk through my example one step at a time.
+
+Explain exactly what happens.
+
+Do not skip internal reasoning steps.
+
+---
+
+## 7. Enterprise design
+
+Explain how companies typically implement this.
+
+Discuss common design patterns.
+
+Discuss trade-offs.
+
+---
+
+## 8. Common mistakes
+
+Explain beginner mistakes.
+
+Explain production mistakes.
+
+Explain why they happen.
+
+---
+
+## 9. Framework mapping
+
+Only after explaining the concept.
+
+Explain how it appears in:
+
+* LangGraph
+* OpenAI Agents SDK
+* Claude SDK
+* Google ADK
+* CrewAI
+* Semantic Kernel
+
+Focus on concepts rather than APIs.
+
+---
+
+## 10. Summary
+
+End every chapter with:
+
+* Key ideas
+* Mental model
+* Interview questions
+* Self-check questions
+* Practical exercises using my RCA platform
+
+---
+
+# Topics to cover
+
+Create a complete handbook covering topics such as:
+
+1. LLM fundamentals
+2. Tokens
+3. Context windows
+4. Prompt engineering
+5. Context engineering
+6. Structured outputs
+7. Function calling
+8. Tool calling
+9. MCP
+10. Intent
+11. Entity extraction
+12. Entity resolution
+13. Semantic layer
+14. Planner
+15. Routing
+16. Capabilities
+17. Tool registry
+18. Capability registry
+19. State
+20. Memory
+21. RAG
+22. Knowledge graphs
+23. Multi-agent systems
+24. Workflow orchestration
+25. LangGraph concepts
+26. Guardrails
+27. Evaluation
+28. Agent observability
+29. Security
+30. Human-in-the-loop
+31. Production architecture
+
+---
+
+# Writing requirements
+
+* Produce a book-quality handbook.
+* Assume no prior AI knowledge.
+* Use the same running observability example throughout the entire book.
+* Introduce new concepts only after the prerequisites are understood.
+* Frequently refer back to previous chapters so the reader sees how everything connects.
+* Prefer visual explanations over long paragraphs whenever possible.
+* If a concept can be illustrated with a workflow or diagram, always include one.
+* Build from simple to advanced, ending with a complete end-to-end architecture for a production-grade enterprise AI agent.
