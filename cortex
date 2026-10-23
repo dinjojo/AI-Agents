@@ -1,0 +1,135 @@
+
+## Objective
+
+Design a data quality anomaly detection capability for futures reference data that identifies incorrect product matching, unexpected reference-data mutations, and erroneous vendor-driven updates.
+
+The primary concern is not limited to expired contract reuse. The system must detect cases where incoming vendor data is incorrectly associated with an existing internal product, causing an unintended update instead of creating a distinct product or preserving the correct mapping.
+
+Examples include:
+- A vendor sends a different futures contract, but cross-reference matching maps it to an existing internal product.
+- A vendor changes identifiers or reference attributes, and the ingestion process incorrectly interprets the change as an update to an existing product.
+- A vendor sends incorrect attributes that overwrite valid internal reference data.
+- Two distinct vendor instruments are incorrectly mapped to the same internal product.
+- An existing product is duplicated because its cross-reference mapping was lost or changed.
+- A valid product is incorrectly created, updated, deleted, or merged.
+
+Expired-contract record reuse is one example within this broader scope.
+
+## 1. Detection strategy
+
+Build a layered approach:
+
+### A. Product identity and matching validation
+
+Investigate the product-matching process, including:
+- Vendor identifiers and cross-reference keys.
+- Internal product identifiers.
+- Exchange, underlying, instrument type, contract month, expiry, and other identity-defining attributes.
+- Matching precedence when multiple cross-reference keys are available.
+- Behavior when identifiers are changed, missing, reused, or conflicting.
+
+Detect cases where the incoming record's identity is inconsistent with the internal product to which it is mapped.
+
+Do not assume that a vendor ID or cross-reference key uniquely identifies a product permanently. Establish identifier semantics for each vendor.
+
+### B. Historical mutation analysis
+
+Preserve historical versions of vendor and internal reference records.
+
+For each incoming update, compare:
+- Previous vendor record and current vendor record.
+- Previous internal product and proposed updated internal product.
+- Previous and current cross-reference mappings.
+- Identity attributes versus specification and descriptive attributes.
+- Actual changes versus expected changes under the product lifecycle.
+
+Detect unexpected identity changes, suspicious combinations of changed fields, and modifications that contradict established product behavior.
+
+### C. Cross-record and cross-source validation
+
+Compare incoming records against:
+- Other products from the same vendor.
+- Existing internal products.
+- Exchange or authoritative reference data, where available.
+- Expected futures contract universes.
+- Related contracts within the same product family.
+
+Identify conflicting identities, duplicate mappings, near-duplicate products, missing products, and inconsistent attributes.
+
+### D. Ingestion and batch anomaly detection
+
+Monitor:
+- Counts of inserted, updated, deleted, and unchanged products.
+- Number of vendor records mapped to each internal product.
+- Number of internal products affected by each cross-reference key.
+- Unexpected changes in mapping cardinality.
+- Mass updates to identity or specification fields.
+- Sudden changes in product populations, missing fields, or update rates.
+
+### E. Cortex-assisted analysis
+
+Use Snowflake ML Anomaly Detection for time-series metrics such as update rates, product counts, mapping conflicts, and attribute-change frequencies, segmented by vendor, exchange, and product family.
+
+Use Cortex LLM to analyze individual suspicious mappings and clusters of anomalies using historical versions, matching evidence, and validation results.
+
+The LLM should explain and prioritize anomalies. Deterministic identity rules and authoritative data should govern whether a mapping or product update is valid.
+
+## 2. Required anomaly scenarios
+
+The design should explicitly consider:
+
+1. Incoming vendor record represents a different product but matches an existing internal product.
+2. One vendor record maps to multiple internal products unexpectedly.
+3. Multiple distinct vendor records map to the same internal product unexpectedly.
+4. A cross-reference key changes or is reassigned, causing an incorrect match.
+5. Product identity attributes change while the internal product ID remains unchanged.
+6. Product specifications change unexpectedly or conflict with authoritative values.
+7. An existing product should have been updated but a duplicate product is created.
+8. A new product should have been created but an existing product is incorrectly overwritten.
+9. An update, insertion, or deletion is inconsistent with historical vendor behavior or the expected product universe.
+10. A vendor batch contains a mass mapping or attribute change that is statistically unusual.
+
+## 3. Proposed data structures
+
+`VENDOR_REFERENCE_HISTORY`
+- Vendor records, historical versions, source snapshot, and ingestion timestamp.
+
+`INTERNAL_PRODUCT_HISTORY`
+- Historical internal product attributes and product lifecycle.
+
+`CROSS_REFERENCE_HISTORY`
+- Vendor keys, internal product IDs, mapping history, mapping source, and effective dates.
+
+`PRODUCT_CHANGE_EVENTS`
+- Incoming record, matched internal product, previous/current values, changed fields, and identity comparison results.
+
+`FUTURES_DQ_METRICS`
+- Vendor-, exchange-, and product-level metrics for anomaly detection.
+
+`FUTURES_DQ_INCIDENTS`
+- Incident type, affected records, evidence, severity, suspected cause, and resolution.
+
+## 4. Implementation sequence
+
+1. Inspect the actual vendor schema, internal product schema, cross-reference tables, and matching logic.
+2. Document how product identity is established and when new internal products should be created.
+3. Preserve historical vendor records, internal products, and cross-reference mappings.
+4. Construct change events that capture both the incoming vendor record and the internal product selected by the matching process.
+5. Implement deterministic checks for identity conflicts, incorrect mapping cardinality, duplicate products, and suspicious mutations.
+6. Discover historical field-change patterns and mapping behavior by vendor and product family.
+7. Build Cortex ML metrics for unusual mapping and update patterns.
+8. Use Cortex LLM to investigate anomalies and produce evidence-based explanations.
+9. Evaluate against known historical data quality incidents and measure false positives before production deployment.
+
+## Expected deliverable
+
+Produce a concrete design using the actual futures reference-data schema, including:
+- Product identity and cross-reference matching rules.
+- Historical change and mapping analysis.
+- SQL-based anomaly checks.
+- Cortex ML features and model approach.
+- Cortex LLM investigation prompt.
+- Incident classification, severity, and evidence.
+- Validation against known cases of incorrect product matching, updates, and product creation.
+
+The objective is to detect when vendor data is being incorrectly interpreted or applied to internal products, regardless of whether the underlying cause is record reuse, cross-reference mismatch, attribute corruption, or another ingestion defect.
